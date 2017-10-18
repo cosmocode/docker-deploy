@@ -8,7 +8,7 @@ from fabric.api import run, env, cd
 from fabric.context_managers import shell_env
 
 
-PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DEFAULTS = dict(
     TARGET_PORT=6589,
