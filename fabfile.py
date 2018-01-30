@@ -84,6 +84,8 @@ BRANCH = CONFIG.get('branch')
 def pre():
     if CONFIG.get('PRE_CMDS'):
         [run(cmd) for cmd in CONFIG.get('PRE_CMDS')]
+    if CONFIG.get('SEND_CHANGELOG'):
+        run('echo $(git rev-parse --verify HEAD) > /tmp/pre_pull_commit_sha', quiet=True)
 
 
 def git_pull():
@@ -98,6 +100,12 @@ def post():
         [run(cmd) for cmd in CONFIG.get('POST_CMDS')]
 
 
+def send_changelog():
+    recipients = CONFIG.get('SEND_CHANGELOG').split(',')
+    for recipient in recipients:
+        run('git log $(cat /tmp/pre_pull_commit_sha)..HEAD --pretty=format:"%%h - %%cd - %%s" --reverse --no-merges | mail -s "TopMeteo Changelog" %s' % recipient, quiet=True)
+
+
 def deploy():
     with cd(CONFIG.get('TARGET_PATH')):
         with shell_env(**PRE_CMD_ENV):
@@ -105,4 +113,5 @@ def deploy():
         git_pull()
         with shell_env(**POST_CMD_ENV):
             post()
-
+        if CONFIG.get('SEND_CHANGELOG'):
+            send_changelog()
