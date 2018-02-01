@@ -102,9 +102,8 @@ def post():
 
 def send_changelog():
     recipients = CONFIG.get('SEND_CHANGELOG').split(',')
-    run('env')
     for recipient in recipients:
-        run('git log $(cat /tmp/pre_pull_commit_sha)..HEAD --pretty=format:"%%h - %%cd - %%s" --reverse --no-merges | mail -s "TopMeteo Changelog" %s' % recipient, quiet=True)
+        run('git log $(cat /tmp/pre_pull_commit_sha)..HEAD --pretty=format:"%%h - %%cd - %%s" --reverse --no-merges | mail -s "TopMeteo Changelog - $(git rev-parse --abbrev-ref HEAD)" %s' % recipient, quiet=True)
 
 
 def deploy():
