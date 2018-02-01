@@ -102,8 +102,11 @@ def post():
 
 def send_changelog():
     recipients = CONFIG.get('SEND_CHANGELOG').split(',')
+    pre_pull_commit_sha = run('cat /tmp/pre_pull_commit_sha')
+    current_branch = run('git rev-parse --abbrev-ref HEAD')
+    project_name = run('git config --get remote.origin.url|cut -d ":" -f 2|cut -d "." -f 1')
     for recipient in recipients:
-        run('git log $(cat /tmp/pre_pull_commit_sha)..HEAD --pretty=format:"%%h - %%cd - %%s" --reverse --no-merges | mail -s "TopMeteo Changelog - $(git rev-parse --abbrev-ref HEAD)" %s' % recipient, quiet=True)
+        run('git log %s..HEAD --pretty=format:"%%h - %%cd - %%s" --reverse --no-merges | mail -s "Project: %s Changelog - %s" %s' % (pre_pull_commit_sha, project_name, current_branch, recipient), quiet=True)
 
 
 def deploy():
