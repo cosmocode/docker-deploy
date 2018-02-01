@@ -13,6 +13,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULTS = dict(
     TARGET_PORT=6589,
     TARGET_USER='www-data',
+    LOG_FORMAT='%%h - %%cd - %%s',
 )
 
 REQUIRED = (
@@ -102,11 +103,16 @@ def post():
 
 def send_changelog():
     recipients = CONFIG.get('SEND_CHANGELOG').split(',')
-    pre_pull_commit_sha = run('cat /tmp/pre_pull_commit_sha')
-    current_branch = run('git rev-parse --abbrev-ref HEAD')
-    project_name = run('git config --get remote.origin.url|cut -d ":" -f 2|cut -d "." -f 1')
+    pre_pull_commit_sha = run('cat /tmp/pre_pull_commit_sha', quiet=True)
     for recipient in recipients:
-        run('git log %s..HEAD --pretty=format:"%%h - %%cd - %%s" --reverse --no-merges | mail -s "Project: %s Changelog - %s" %s' % (pre_pull_commit_sha, project_name, current_branch, recipient), quiet=True)
+        run('git log %s..HEAD --pretty=format:"%s" --reverse --no-merges | mail -s "%s/%s(%s) Changelog" %s' % (
+            pre_pull_commit_sha,
+            CONFIG.get('LOG_FORMAT'),
+            os.getenv('CI_PROJECT_NAMESPACE'),
+            os.getenv('CI_PROJECT_NAME'),
+            BRANCH,
+            recipient
+        ), quiet=True)
 
 
 def deploy():
