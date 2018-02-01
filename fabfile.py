@@ -105,11 +105,10 @@ def send_changelog():
     recipients = CONFIG.get('SEND_CHANGELOG').split(',')
     pre_pull_commit_sha = run('cat /tmp/pre_pull_commit_sha', quiet=True)
     for recipient in recipients:
-        run('git log %s..HEAD --pretty=format:"%s" --reverse --no-merges | mail -s "%s/%s(%s) Changelog" %s' % (
+        run('git log %s..HEAD --pretty=format:"%s" --reverse --no-merges | mail -s "%s(%s) Changelog" %s' % (
             pre_pull_commit_sha,
             CONFIG.get('LOG_FORMAT'),
-            os.getenv('CI_PROJECT_NAMESPACE'),
-            os.getenv('CI_PROJECT_NAME'),
+            os.getenv('CI_PROJECT_PATH'),
             BRANCH,
             recipient
         ), quiet=True)
