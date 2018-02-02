@@ -13,7 +13,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULTS = dict(
     TARGET_PORT=6589,
     TARGET_USER='www-data',
-    LOG_FORMAT='%%h - %%cd - %%s',
+    LOG_FORMAT='%h - %cd - %s',
 )
 
 REQUIRED = (
