@@ -28,8 +28,8 @@ def abort(message, status=1):
 
 
 def configure(filename='.fabric-target-conf.json', env='TARGET_CONF', cls=None, **defaults):
-    build_job_name = os.getenv('CI_BUILD_NAME')
-    branch = os.getenv('CI_BUILD_REF_NAME')
+    build_job_name = os.getenv('CI_JOB_NAME')
+    branch = os.getenv('CI_COMMIT_REF_NAME')
 
     if not (build_job_name and branch):
         return abort('CI environment variables are missing. You are probably not a real GitLab runner.')
